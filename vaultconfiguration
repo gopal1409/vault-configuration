@@ -1,0 +1,82 @@
+How to install Consul as backend in hashicorp
+1. wget https://releases.hashicorp.com/consul/1.10.0/consul_1.10.0_linux_amd64.zip
+ 4  apt-get install unzip
+    5  unzip consul_1.10.0_linux_amd64.zip
+    6  mv consul /usr/bin/
+    7  vim /etc/systemd/system/consul.service
+[Service]
+ExecStart=/usr/bin/consul agent -server -ui -data-dir=/temp/consul -bootstrap-expect=1 -node=vault -bind=0.0.0.0 -config-dir=/etc/consul.d/
+ExecReload=/bin/kill -HUP $MAINPID
+LimitNOFILE=65536
+[Install]
+WantedBy=multi-user.target
+
+    8  mkdir /etc/consul.d/
+    9  vim /etc/consul.d/ui.json
+{
+  "addresses": {
+    "http": "0.0.0.0"
+  }
+}
+
+
+   10  systemctl daemon-reload
+   11  systemctl start consul
+   12  systemctl enable consul
+   13  systemctl status consul
+   14  consul --version
+
+How to install hashicorp vault
+ 18  wget https://releases.hashicorp.com/vault/1.8.2/vault_1.8.2_linux_amd64.zip
+   19  unzip vault_1.8.2_linux_amd64.zip
+   20  mv vault /usr/bin/
+   21  mkdir /etc/vault
+   22  vim /etc/vault/config.hcl
+disable_cache = true
+disable_mlock = true
+ui = true
+listener "tcp" {
+   address          = "0.0.0.0:8200"
+   tls_disable      = 1
+
+}
+storage "consul" {
+   address  = "127.0.0.1:8500"
+ }
+api_addr         = "http://0.0.0.0:8200"
+max_lease_ttl         = "10h"
+default_lease_ttl    = "10h"
+cluster_name         = "vault"
+raw_storage_endpoint     = true
+disable_sealwrap     = true
+disable_printable_check = true
+
+   23  vim /etc/systemd/system/vault.service
+[Unit]
+Description=Vault
+Documentation=https://www.vault.io/
+[Service]
+ExecStart=/usr/bin/vault server -config=/etc/vault/config.hcl
+ExecReload=/bin/kill -HUP $MAINPID
+LimitNOFILE=65536
+[Install]
+WantedBy=multi-user.target
+
+
+   24  export VAULT_ADDR='http://127.0.0.1:8200'
+   25  systemctl daemon-reload
+   26  systemctl start vault
+   27  systemctl status vault
+   28  vault status
+
+~
+root@ip-172-31-18-164:~# vault operator init
+Unseal Key 1: tfDj+Jkk0LBc8LtWSFu9XN144SkQkYuVbaoF09Yh+rYH
+Unseal Key 2: YMixveTL51V2N92g8LfSzsGBgVuPaxiUrtABdCSC0RGZ
+Unseal Key 3: T93G/BkKX1V0Wh3P3BZJ+jsmElsgMkTPv2Ao0cui3yHo
+Unseal Key 4: mmEvmXsLnBrWoKWFb2vgHvkdNgfY5q4nllLKENhKwy0g
+Unseal Key 5: nhZfJdXRm4d/C00+2cg3r8IP3jpxKHZhfFr68jZvpyi5
+
+Initial Root Token: s.whKNZVOr6cUeVE4JZEOnapyV
+
+
