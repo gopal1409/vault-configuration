@@ -12,4 +12,10 @@
   CREATE ROLE ro NOINHERIT;
   GRANT SELECT ON ALL TABLES IN SCHEMA public TO "ro";
   \q
+  344  vi adminpolicy.hcl
+  345  vault policy write admin-policy adminpolicy.hcl
+  346  vault policy list
+  348  vault write auth/userpass/users/admin password=admin-password policies=admin-policy
+  349  vault login -method=userpass username=admin password=admin-password
+
 
