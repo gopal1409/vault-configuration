@@ -17,5 +17,6 @@
   346  vault policy list
   348  vault write auth/userpass/users/admin password=admin-password policies=admin-policy
   349  vault login -method=userpass username=admin password=admin-password
+352  vault secrets enable database
 
 
