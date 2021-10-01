@@ -30,3 +30,4 @@ path "auth/token/create" {
 # Create a password policy
 path "sys/policies/password/*" {
   capabilities = [ "create", "read", "update", "delete", "list", "sudo" ]
+}
