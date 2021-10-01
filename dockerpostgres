@@ -8,3 +8,8 @@
   334  docker pull postgres:latest
   336  docker run --name postgres --env POSTGRES_USER=root --env POSTGRES_PASSWORD=rootpassword --detach --publish 5432:5432 postgres
   docker ps
+  docker exec -it postgres psql
+  CREATE ROLE ro NOINHERIT;
+  GRANT SELECT ON ALL TABLES IN SCHEMA public TO "ro";
+  \q
+
