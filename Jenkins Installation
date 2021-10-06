@@ -1,0 +1,11 @@
+ 591  apt install default-jre
+  592  wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+  593  sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+  594  sudo apt-get update
+  595  sudo apt-get install jenkins
+  596  systemctl status jenkins
+  597  history
+  598  javac
+  599  apt install default-jdk
+  600  systemctl restart jenkins
+  601  systemctl status jenkins
